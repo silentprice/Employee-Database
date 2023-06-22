@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 // Function to display the main menu and handle user input
 function displayMainMenu() {
