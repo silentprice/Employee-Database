@@ -2,5 +2,24 @@
   "dependencies": {
     "inquirer": "^8.2.4",
     "mysql2": "^3.4.0"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "employee-database",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/silentprice/Employee-Database.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/silentprice/Employee-Database/issues"
+  },
+  "homepage": "https://github.com/silentprice/Employee-Database#readme"
 }
