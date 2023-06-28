@@ -1,6 +1,22 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 
+// Connect to database
+const db = mysql.createConnection(
+  {
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'employee_db'
+  },
+);
+
+db.connect((err) => {
+  if (err) throw err
+  console.log('connected to database')
+  displayMainMenu()
+})
+
 // Function to display the main menu and handle user input
 function displayMainMenu() {
     inquirer
@@ -48,3 +64,78 @@ function displayMainMenu() {
         }
       });
   }
+
+  function viewAllDepartments() {
+    db.query('SELECT * FROM department', (err, data) => {
+      if (err) throw err
+      console.table(data)
+      displayMainMenu()
+    })
+  }
+
+  function viewAllRoles() {
+    db.query('SELECT * FROM role', (err, data) => {
+      if (err) throw err
+      console.table(data)
+      displayMainMenu()
+    })
+  }
+
+  function viewAllEmployees() {
+    db.query('SELECT * FROM employee', (err, data) => {
+      if (err) throw err
+      console.table(data)
+      displayMainMenu()
+    })
+  }
+
+  function addDepartment() {
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'deptName',
+        message: 'What is the name of the new department you want to add?'
+      }
+    ]).then(answer => {
+      db.query('INSERT INTO department SET ?', {
+        name: answer.deptName
+      })
+      console.log('Expanding the company!')
+      viewAllDepartments()
+      displayMainMenu()
+    })
+  }
+  function addRole() {
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'positionName',
+        message: 'What is the name role you like to add?'
+      }
+    ]).then(answer => {
+      db.query('INSERT INTO role SET ?', {
+        name: answer.deptName
+      })
+      console.log('Expanding the company!')
+      viewAllRoles()
+      displayMainMenu()
+    })
+  }
+  function addEmployee() {
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'employeeName',
+        message: 'What is the name of the new employee hired?'
+      }
+    ]).then(answer => {
+      db.query('INSERT INTO employee SET ?', {
+        name: answer.deptName
+      })
+      console.log('Expanding the company!')
+      viewAllEmployees()
+      displayMainMenu()
+    })
+  }
+
+  module.exports = displayMainMenu
