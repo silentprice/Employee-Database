@@ -109,34 +109,73 @@ function displayMainMenu() {
     inquirer.prompt([
       {
         type: 'input',
-        name: 'positionName',
-        message: 'What is the name role you like to add?'
+        name: 'roleTitle',
+        message: 'What is the title of the role you would like to add?'
+      },
+      {
+        type: 'input',
+        name: 'roleSalary',
+        message: 'What is the salary for this role?'
+      },
+      {
+        type: 'input',
+        name: 'departmentId',
+        message: 'Enter the department ID for this role:'
       }
-    ]).then(answer => {
-      db.query('INSERT INTO role SET ?', {
-        name: answer.deptName
-      })
-      console.log('Expanding the company!')
-      viewAllRoles()
-      displayMainMenu()
-    })
+    ]).then(answers => {
+      const { roleTitle, roleSalary, departmentId } = answers;
+      const sql = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)';
+      const values = [roleTitle, roleSalary, departmentId];
+      db.query(sql, values, (error, results) => {
+        if (error) {
+          console.error('Failed to add role:', error);
+          return;
+        }
+        console.log('Role added successfully!');
+        viewAllRoles();
+        displayMainMenu();
+      });
+    });
   }
   function addEmployee() {
     inquirer.prompt([
       {
         type: 'input',
-        name: 'employeeName',
-        message: 'What is the name of the new employee hired?'
+        name: 'employeeFirstName',
+        message: 'Enter the first name of the new employee:'
+      },
+      {
+        type: 'input',
+        name: 'employeeLastName',
+        message: 'Enter the last name of the new employee:'
+      },
+      {
+        type: 'input',
+        name: 'roleId',
+        message: 'Enter the role ID for this employee:'
+      },
+      {
+        type: 'input',
+        name: 'managerId',
+        message: 'Enter the manager ID for this employee (leave empty if none):'
       }
-    ]).then(answer => {
-      db.query('INSERT INTO employee SET ?', {
-        name: answer.deptName
-      })
-      console.log('Expanding the company!')
-      viewAllEmployees()
-      displayMainMenu()
-    })
+    ]).then(answers => {
+      const { employeeFirstName, employeeLastName, roleId, managerId } = answers;
+
+      const sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+      const values = [employeeFirstName, employeeLastName, roleId, managerId || null];
+      db.query(sql, values, (error, results) => {
+        if (error) {
+          console.error('Failed to add employee:', error);
+          return;
+        }
+        console.log('Employee added successfully!');
+        viewAllEmployees();
+        displayMainMenu();
+      });
+    });
   }
+ 
   function updateEmployeeRole() {
     // Prompt for employee ID and new role ID
     inquirer.prompt([
@@ -151,8 +190,11 @@ function displayMainMenu() {
         message: 'Enter the new role ID for the employee:'
       }
     ]).then(answers => {
+      // Convert the role ID to an integer
+      const roleId = parseInt(answers.roleId);
+  
       // Update the employee role in the database
-      db.query('UPDATE employee SET role_id = ? WHERE id = ?', [answers.roleId, answers.employeeId], (err, result) => {
+      db.query('UPDATE employee SET role_id = ? WHERE id = ?', [roleId, answers.employeeId], (err, result) => {
         if (err) throw err;
         console.log('Employee role updated successfully!');
         viewAllEmployees();
