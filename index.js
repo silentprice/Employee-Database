@@ -137,5 +137,29 @@ function displayMainMenu() {
       displayMainMenu()
     })
   }
+  function updateEmployeeRole() {
+    // Prompt for employee ID and new role ID
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'employeeId',
+        message: 'Enter the ID of the employee you want to update:'
+      },
+      {
+        type: 'input',
+        name: 'roleId',
+        message: 'Enter the new role ID for the employee:'
+      }
+    ]).then(answers => {
+      // Update the employee role in the database
+      db.query('UPDATE employee SET role_id = ? WHERE id = ?', [answers.roleId, answers.employeeId], (err, result) => {
+        if (err) throw err;
+        console.log('Employee role updated successfully!');
+        viewAllEmployees();
+        displayMainMenu();
+      });
+    });
+  }
+  
 
   module.exports = displayMainMenu
